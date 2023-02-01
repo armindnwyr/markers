@@ -11,7 +11,7 @@ class Categoria extends Model
     use HasFactory;
 
     // uno a muchos
-    public function Marcadores(){
+    public function marcadores(){
         return $this->hasMany(Marcador::class);
     } 
 }

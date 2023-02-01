@@ -9,8 +9,9 @@ class Marcador extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['categoria_id', 'nombre'];
     // muchos a uno
-    public function Categoria(){
+    public function categoria(){
         return $this->belongsTo(Categoria::class);
     }
 }

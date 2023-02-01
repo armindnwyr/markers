@@ -25,8 +25,6 @@
             <InputError class="mt-2" :message="form.errors.nombre" />
           </div>
 
-
-
           <div class="flex items-center justify-end mt-4">
             <PrimaryButton
               class="ml-4"

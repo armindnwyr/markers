@@ -59,9 +59,9 @@ const form = useForm({
 });
 
 const submit = () => {
-    router.post(`/categorias/${props.categoria.id}`, {
-        _method: "put",
-        nombre: form.nombre,
-    })
-  };
+  router.post(`/categorias/${props.categoria.id}`, {
+    _method: "put",
+    nombre: form.nombre,
+  });
+};
 </script>

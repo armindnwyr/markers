@@ -2,9 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\MarcadorResource;
+use App\Models\Categoria;
 use App\Models\Marcador;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use League\CommonMark\Extension\CommonMark\Node\Inline\Strong;
 
 class MarcadorController extends Controller
 {
@@ -15,7 +20,8 @@ class MarcadorController extends Controller
      */
     public function index()
     {
-        return Inertia::render('Marcadores/Index');
+        $marcador = MarcadorResource::collection(Marcador::with('categoria')->get());
+        return Inertia::render('Marcadores/Index', compact('marcador'));
     }
 
     /**
@@ -25,7 +31,8 @@ class MarcadorController extends Controller
      */
     public function create()
     {
-        //
+        $categorias = Categoria::all();
+        return Inertia::render('Marcadores/Create', compact('categorias'));
     }
 
     /**
@@ -36,7 +43,30 @@ class MarcadorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'titulo' => 'required',
+            'enlace' => 'required',
+            'image' => 'required',
+            'descripcion' => 'required',
+            'categoria' => 'required'
+        ]);
+
+        $marcador = new Marcador();
+
+        if ($request->hasFile('image')) {
+            $img = $request->file('image')->store('public/imagen');
+            $url = Storage::url($img);
+            $marcador->image = $url;
+        }
+
+        $marcador->titulo = $request->titulo;
+        $marcador->enlace = $request->enlace;
+        $marcador->descripcion = $request->descripcion;
+        $marcador->categoria_id = $request->categoria;
+
+        $marcador->save();
+
+        return Redirect::route('marcador.index');
     }
 
     /**
@@ -58,7 +88,9 @@ class MarcadorController extends Controller
      */
     public function edit(Marcador $marcador)
     {
-        //
+        $categorias = Categoria::all();
+
+        return Inertia::render('Marcadores/Edit', compact('marcador', 'categorias'));
     }
 
     /**
@@ -70,7 +102,32 @@ class MarcadorController extends Controller
      */
     public function update(Request $request, Marcador $marcador)
     {
-        //
+        $request->validate([
+            'titulo' => 'required',
+            'enlace' => 'required',
+            'descripcion' => 'required',
+            'categoria' => 'required'
+        ]);
+
+
+
+        if ($request->hasFile('image')) {
+            $dimage = str_replace('storage', 'public', $marcador->image);
+            Storage::delete($dimage);
+
+            $img = $request->file('image')->store('public/imagen');
+            $url = Storage::url($img);
+
+            $marcador->image = $url;
+        }
+
+        $marcador->titulo = $request->titulo;
+        $marcador->enlace = $request->enlace;
+        $marcador->descripcion = $request->descripcion;
+        $marcador->categoria_id = $request->categoria;
+
+        $marcador->save();
+        return Redirect::route('marcador.index');
     }
 
     /**
@@ -81,6 +138,11 @@ class MarcadorController extends Controller
      */
     public function destroy(Marcador $marcador)
     {
-        //
+        $img = str_replace('storage', 'public', $marcador->image);
+        Storage::delete($img);
+
+        $marcador->delete();
+
+        return Redirect::route('marcador.index');
     }
 }

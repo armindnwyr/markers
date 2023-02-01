@@ -41,7 +41,7 @@ class CategoriaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre'=>'required'
+            'nombre' => 'required'
         ]);
 
         $categoria = new Categoria();
@@ -85,7 +85,7 @@ class CategoriaController extends Controller
     public function update(Request $request, Categoria $categoria)
     {
         $request->validate([
-            'nombre'=>'required'
+            'nombre' => 'required'
         ]);
 
         $categoria->nombre = $request->nombre;
@@ -93,7 +93,6 @@ class CategoriaController extends Controller
         $categoria->save();
 
         return Redirect::route('categorias.index');
-
     }
 
     /**
